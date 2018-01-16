@@ -1,0 +1,23 @@
+export default strings = {
+  follower: 'follower',
+  following: 'following',
+  privateTeam: 'This is private team !',
+  noTraining: 'No Training yet !',
+  km: 'km',
+  members: 'Members',
+  trainings: 'Trainings',
+  follow: 'Follow',
+  unfollow: 'Unfollow',
+  teams: 'Teams',
+  joinRequest: 'join',
+  participants: 'Participants',
+  team: 'TEAM',
+  allTeams: 'All Teams',
+  myTeams: 'My Teams',
+  searchTeam: 'Search Team ...',
+  teamTitle: 'TEAM',
+  eventTitle: 'EVENT',
+  alertTitle: 'ALERT',
+  feedTitle: 'FLUX',
+  mapTitle: 'MAP'
+};
