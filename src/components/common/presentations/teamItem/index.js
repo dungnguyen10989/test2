@@ -18,6 +18,8 @@ const TeamItem = props => {
     }
   );
 
+  const { strings } = props;
+
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={() => props.dispatch(actionToDispatch)} >
       <View style={styles.wrapper}>

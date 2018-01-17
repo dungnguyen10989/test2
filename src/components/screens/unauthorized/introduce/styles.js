@@ -18,13 +18,14 @@ export default styles = StyleSheet.create({
     height: _dims.height,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1
+    borderWidth: 1,
+    borderColor: 'red'
   },
   swiper: {
     borderWidth: 1
   },
   image: {
-    flex: 1,
+    width: _dims.width,
     resizeMode: 'center'
   }
 });

@@ -1,15 +1,8 @@
 import 'rxjs';
 import { handleActions } from 'redux-actions';
 import { getOr } from 'lodash/fp';
-import { NavigationActions } from 'react-navigation';
 import { makeFetchAction } from 'redux-api-call';
 import { API_USER } from '../../utils/_APIs';
-
-const reset = NavigationActions.reset({
-  index: 0,
-  key: null,
-  actions: [NavigationActions.navigate({ routeName: 'Authorized' })]
-});
 
 // --- BEGIN --- 
 // --- actionTypes ---
@@ -22,6 +15,7 @@ const GET_MYSELF_SUCCESS = 'GET_MYSELF_SUCCESS';
 // --- actionCreators ---
 export const {
   actionCreator: getMySelfAction,
+  errorSelector: getMySelfError,
   isFetchingSelector: isFetchingMySelfSelector
 } = makeFetchAction(GET_MYSELF, (token) => {
   return {
@@ -37,7 +31,7 @@ export const {
 
 // --- BEGIN --- 
 // --- epics ---
-export const mySelfEpic = (actions$, store) =>
+export const mySelfEpic = (actions$) =>
   actions$
     .filter((action) => {
       const { payload, type } = action;
@@ -46,13 +40,12 @@ export const mySelfEpic = (actions$, store) =>
       return type === '@@api/FETCH_COMPLETE' && name === GET_MYSELF;
     })
     .map((action) => {
-      store.dispatch({
+      return {
         type: GET_MYSELF_SUCCESS,
         payload: {
           data: action.payload.json.data
         }
-      });
-      return reset;
+      };
     });
 // --- epics ---
 // --- END --- 

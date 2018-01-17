@@ -1,15 +1,11 @@
 
 
 import React from 'react';
-import { View, Image } from 'react-native';
+import { View } from 'react-native';
 import { compose, lifecycle } from 'recompose';
 import { connect } from 'react-redux';
 
-import { getDisciplineAction } from '../../../../redux/common/discipline';
-import { getListTeamAction } from '../../../common/containers/listTeam/stateListTeam';
-
 const CheckEmail = (props) => {
-  console.log(props);
   return (
     <View style={{ flex: 1 }}>
     </View>
@@ -19,17 +15,12 @@ const CheckEmail = (props) => {
 const HOCCheckEmail = compose(
   connect(
     state => ({
-      screen: state.unAuthScreen
+      unAuthScreen: state.unAuthScreen
     }),
-    (dispatch) => ({
-      dispatch,
-      getDisciplineAction,
-      getListTeamAction
-    })
+    (dispatch) => ({ dispatch })
   ),
   lifecycle({
     componentDidMount() {
-      this.props.getDisciplineAction();
     }
   })
 )(CheckEmail);

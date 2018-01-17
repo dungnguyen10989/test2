@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, FlatList, ActivityIndicator } from 'react-native';
+import { View, FlatList, ActivityIndicator, AsyncStorage } from 'react-native';
 import { compose, lifecycle, withState } from 'recompose';
 import { connect } from 'react-redux';
 

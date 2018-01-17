@@ -1,16 +1,17 @@
-/* eslint react/prop-types: 0 */
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Image, Platform } from 'react-native';
-
-const leftIcon = require('../../../assets/icons/left.png');
+import { compose } from 'recompose';
+import { View, TouchableOpacity, Text, StyleSheet, Platform } from 'react-native';
+import { connect } from 'react-redux';
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
 const styles = StyleSheet.create({
   wrapper: {
     marginTop: Platform.OS === 'ios' ? 20 : 0,
-    height: 50,
-    backgroundColor: 'transparent',
+    height: 60,
     flexDirection: 'row',
     alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: 'silver'
   },
   left: {
     width: 50,
@@ -24,8 +25,7 @@ const styles = StyleSheet.create({
     height: 30,
   },
   title: {
-    color: '#fff',
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
     flex: 1,
     textAlign: 'center',
@@ -33,29 +33,29 @@ const styles = StyleSheet.create({
 });
 
 
-class Header extends React.Component {
-  render() {
-    const { onLeftPress, backgroundColor } = this.props;
-    const secondStyle = backgroundColor ? { backgroundColor } : null;
-    const title = backgroundColor ? 'Sign In with Strava' : 'Account setup';
-    return (
-      <View style={[styles.wrapper, secondStyle]}>
-        {
-          onLeftPress &&
-          <TouchableOpacity
-            style={styles.left}
-            activeOpacity={0.5}
-            onPress={onLeftPress}
-          >
-            <Image source={leftIcon} style={styles.leftButton} />
-          </TouchableOpacity>
-        }
+const Header = props => {
+  const { back, onLeftPress, strings } = props;
+  return (
+    <View style={styles.wrapper}>
+      {
+        back !== false &&
+        <TouchableOpacity
+          style={styles.left}
+          activeOpacity={0.6}
+          onPress={onLeftPress}
+        >
+          <Icon name="arrow-left" size={20} color="#000" />
+        </TouchableOpacity>
+      }
+      <Text style={styles.title}>{strings.titleBasicInfo}</Text>
+      { back !== false && <View style={styles.left} /> }
+    </View>
+  );
+};
 
-        <Text style={styles.title}>{title}</Text>
-      </View>
-    );
-  }
-}
+const HOCHeader = compose(
+  connect(state => ({ strings: state.strings }))
+)(Header);
 
-export default Header;
+export default HOCHeader;
 

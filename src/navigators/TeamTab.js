@@ -1,5 +1,4 @@
 import { StackNavigator } from 'react-navigation';
-// import FilterTeam from '../components/screens/authorized/tabs/teamTab/FilterTeam';
 import FilterTeam from './FilterTeam';
 import TeamInformation from './TeamInformation';
 import $DetailOfUser from '../components/common/containers/detailOfUser/indexDetailOfUser';

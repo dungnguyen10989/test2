@@ -1,45 +1,93 @@
 import React from 'react';
-import { View, TextInput } from 'react-native';
-import { compose, withState } from 'recompose';
+import { View, TextInput, Alert } from 'react-native';
+import { compose, withState, lifecycle } from 'recompose';
+import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { Button } from 'react-native-elements';
+import { 
+  checkSocialExistsAction, 
+  isFetchingSocialExistsSelector,
+  isFetchingSocialTokenSelector
+} from '../../../../redux/common/social';
+import { getAuthTokenAction, isFetchingAuthTokenSelector } from '../../../../redux/common/auth';
+import Overlay from '../../../common/presentations/overlay/';
 
-import { getAuthTokenAction, isFetchingAuthTokenSelector } from '../../../../redux/common/token';
+import TwitterButton from './ButtonTW';
+import { CHANGE_UNAUTHORIZED_SCREEN, BASIC_INFO } from '../../../../redux/common/unAuthScreen';
 
+const FBSDK = require('react-native-fbsdk');
 
-const navigate = (routeName) => NavigationActions.navigate({ routeName });
+const {
+  LoginButton,
+  AccessToken
+} = FBSDK;
 
 const SignIn = (props) => {
-  const { 
-    getAuthTokenAction, username, setUserName, password, setPassword
+  const {
+    dispatch, username, setUserName, password, setPassword, strings,
+    isFetchingSocialExists, isFetchingSocialToken, isFetchingAuthToken
   } = props;
+
+  const visible = 
+  isFetchingSocialExists || 
+  isFetchingSocialToken || 
+  isFetchingAuthToken;
+
   return (
     <View style={{ flex: 1, justifyContent: 'center' }}>
-      <TextInput 
-        style={{ 
-          height: 40, borderColor: 'gray', borderWidth: 1, backgroundColor: '#fff', width: '100%' 
+      <Overlay visible={visible} />
+      <TwitterButton />
+      <LoginButton
+        publishPermissions={['publish_actions']}
+        onLoginFinished={
+            (error, result) => {
+              if (error) {
+                Alert.alert(
+                  strings.error,
+                  `${strings.facebookLogin} ${result.error}`,
+                  [
+                    { text: 'OK', onPress: () => {} },
+                  ],
+                  { cancelable: false }
+                );
+              } else if (result.isCancelled) {
+
+              } else {
+                AccessToken.getCurrentAccessToken().then(
+                  (data) => {
+                    const obj = {
+                      provider_uid: data.userID,
+                      provider: 'facebook',
+                      token: data.accessToken
+                    };
+                    dispatch(checkSocialExistsAction(obj));
+                  }
+                );
+              }
+            }
+          }
+      />
+      <TextInput
+        style={{
+          height: 40, borderColor: 'gray', borderWidth: 1, backgroundColor: '#fff', width: '100%'
         }}
         onChangeText={(username) => setUserName(username)}
         value={username}
       />
-      <TextInput 
-        style={{ 
-          height: 40, borderColor: 'gray', borderWidth: 1, backgroundColor: '#fff', width: '100%' 
+      <TextInput
+        style={{
+          height: 40, borderColor: 'gray', borderWidth: 1, backgroundColor: '#fff', width: '100%'
         }}
         onChangeText={(password) => setPassword(password)}
         value={password}
       />
-      <Button 
+      <Button
         title="log in"
-        onPress={() => getAuthTokenAction(username, password)}
+        onPress={() => dispatch(getAuthTokenAction(username, password))}
       />
-      <Button 
+      <Button
         title="Forgot"
-        onPress={() => props.navigation.dispatch(navigate('Forgot'))}
-      />
-      <Button 
-        title="log in"
-        onPress={() => getAuthTokenAction(username, password)}
+        onPress={() => dispatch({ type: CHANGE_UNAUTHORIZED_SCREEN, payload: { routeName: BASIC_INFO } })}
       />
     </View>
   );
@@ -48,15 +96,28 @@ const SignIn = (props) => {
 const HOCSignIn = compose(
   connect(
     state => ({
+      strings: state.strings,
+      mySelf: state.mySelfReducer,
       isFetchingAuthToken: isFetchingAuthTokenSelector(state),
-      strings: state.strings
+      isFetchingSocialExists: isFetchingSocialExistsSelector(state),
+      isFetchingSocialToken: isFetchingSocialTokenSelector(state)
     }),
-    {
-      getAuthTokenAction
-    }
+    dispatch => ({ dispatch }),
   ),
   withState('username', 'setUserName', 'admin@bikenconnect.com'),
   withState('password', 'setPassword', 'admin'),
+  lifecycle({
+    componentWillReceiveProps(nextProps) {
+      if(nextProps.mySelf.id) {
+        const resetRoot = NavigationActions.reset({
+          index: 0,
+          key: null,
+          actions: [NavigationActions.navigate({ routeName: 'Authorized' })]
+        });
+        this.props.dispatch(resetRoot);        
+      }
+    }
+  })
 )(SignIn);
 
 export default HOCSignIn;

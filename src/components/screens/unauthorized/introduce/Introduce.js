@@ -1,13 +1,12 @@
 import React from 'react';
-import { Image, StatusBar, AsyncStorage, View } from 'react-native';
+import { StatusBar, AsyncStorage, View } from 'react-native';
 import { connect } from 'react-redux';
 import { compose, lifecycle } from 'recompose';
-import Swiper from 'react-native-swiper';
 import { NavigationActions } from 'react-navigation';
+import AppIntroSlider from 'react-native-app-intro-slider';
 
 import styles from './styles';
 import { SET_TOKEN } from '../../../../redux/common/token';
-import { CHANGE_UNAUTHORIZED_SCREEN, BASIC_INFO } from '../../../../redux/common/unAuthScreen';
 import { getMySelfAction, isFetchingMySelfSelector } from '../../../../redux/common/mySelf';
 import { getDisciplineAction, isFetchingDisciplineSelector } from '../../../../redux/common/discipline';
 import { getLevelAction, isFetchingLevelSelector } from '../../../../redux/common/level';
@@ -18,23 +17,41 @@ const img2 = require('../../../../assets/onboarding/img2.png');
 const img3 = require('../../../../assets/onboarding/img3.png');
 const img4 = require('../../../../assets/onboarding/img4.png');
 
+const resetRoot = NavigationActions.reset({
+  index: 0,
+  key: null,
+  actions: [NavigationActions.navigate({ routeName: 'Authorized' })]
+});
+
 const slides = [
   {
-    key: 'somethun',
+    key: 1,
     image: img1,
-    imageStyle: styles.image
+    imageStyle: styles.image,
   },
   {
-    key: 'somethun-dos',
+    key: 2,
     image: img2,
-    imageStyle: styles.image
+    imageStyle: styles.image,
   },
   {
-    key: 'somethun1',
+    key: 3,
     image: img3,
-    imageStyle: styles.image
+    imageStyle: styles.image,
+  },
+  {
+    key: 4,
+    image: img4,
+    imageStyle: styles.image,
   }
 ];
+
+const reset = NavigationActions.reset({
+  index: 0,
+  actions: [
+    NavigationActions.navigate({ routeName: 'UnAuthForm' })
+  ]
+});
 
 const Introduce = (props) => {
   const {
@@ -47,20 +64,10 @@ const Introduce = (props) => {
     <View style={{ flex: 1 }}>
       <Overlay visible={visible} />
       <StatusBar barStyle="light-content" backgroundColor="transparent" />
-      <Swiper style={styles.swiper}>
-        <View style={styles.slider}>
-          <Image source={img1} style={styles.image} />
-        </View>
-        <View style={styles.slider}>
-          <Image source={img2} style={styles.image} />
-        </View>
-        <View style={styles.slider}>
-          <Image source={img3} style={styles.image} />
-        </View>
-        <View style={styles.slider}>
-          <Image source={img4} style={styles.image} />
-        </View>
-      </Swiper>
+      <AppIntroSlider
+        slides={slides}
+        onDone={() => props.navigation.dispatch(reset)}
+      />
     </View>
   );
 };
@@ -72,42 +79,26 @@ const HOCIntroduce = compose(
       isFetchingDiscipline: isFetchingDisciplineSelector(state),
       isFetchingLevel: isFetchingLevelSelector(state),
       isFetchingMySelf: isFetchingMySelfSelector(state),
+      mySelf: state.mySelfReducer
     }),
     dispatch => ({ dispatch })
   ),
   lifecycle({
     componentDidMount() {
+      AsyncStorage.removeItem('token');
       this.props.dispatch(getDisciplineAction());
       this.props.dispatch(getLevelAction());
+      AsyncStorage.getItem('token').then(response => {
+        if (response) {
+          this.props.dispatch({ type: SET_TOKEN, payload: response });
+          this.props.dispatch(getMySelfAction(response));
+        }
+      });
     },
     componentWillReceiveProps(nextProps) {
-      const reset = NavigationActions.reset({
-        index: 0,
-        actions: [
-          NavigationActions.navigate({ routeName: 'UnAuthForm' })
-        ]
-      });
-
-      if (!nextProps.isFetchingDiscipline && !nextProps.isFetchingLevel &&
-        (this.props.isFetchingDiscipline || this.props.isFetchingLevel)) {
-        AsyncStorage.getItem('token').then(response => {
-          if (response) {
-            const data = JSON.parse(response);
-            this.props.dispatch({ type: SET_TOKEN, payload: data });
-            if (data.exists) {
-              this.props.dispatch(getMySelfAction(data.token));
-            } else {
-              this.props.dispatch({
-                type: CHANGE_UNAUTHORIZED_SCREEN,
-                payload: {
-                  routeName: BASIC_INFO,
-                  back: false
-                }
-              });
-              this.props.navigation.dispatch(reset);
-            }
-          }
-        });
+      if(!this.props.isFetchingDiscipline && !this.props.isFetchingLevel && 
+        !this.props.isFetchingMySelf && nextProps.mySelf.id) {
+        this.props.dispatch(resetRoot);
       }
     }
   })

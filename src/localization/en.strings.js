@@ -19,5 +19,6 @@ export default strings = {
   eventTitle: 'EVENT',
   alertTitle: 'ALERT',
   feedTitle: 'FLUX',
-  mapTitle: 'MAP'
+  mapTitle: 'MAP',
+  titleBasicInfo: 'Basic Info'
 };
