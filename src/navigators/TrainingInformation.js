@@ -4,7 +4,7 @@ import { TabNavigator } from 'react-navigation';
 
 import $DetailOfTraining from '../components/common/containers/detailOfTraining/indexDetailOfTraining';
 import $MembersOfTraining from '../components/common/containers/membersOfTraining/indexMembersOfTraining';
-import $MarkerMap from '../components/common/containers/markerMap';
+import $MarkerMap from '../components/common/containers/markerMap/indexMarkerMap';
 
 const TrainingInformation = (props) => {
   const { id, type } = props.navigation.state.params;

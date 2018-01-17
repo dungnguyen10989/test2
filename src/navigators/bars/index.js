@@ -58,15 +58,15 @@ class Tabbar extends React.Component {
             style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}
             onPress={() => {
               if (focused) { // 2 equals index of MapTap in routes
-                if(navigationState.routes[index].routes[1]) {
+                if(index !== 2 && navigationState.routes[index].routes[1]) {
                   const { key } = navigationState.routes[index].routes[1];
                   const actionToDispatch = NavigationActions.back({
                     key
                   });
                   dispatch(actionToDispatch);
                 }else {
-                  const { scrollToTopFlatList } = navigationState.routes[index].routes[0].params;
-                  scrollToTopFlatList();
+                  // const { scrollToTopFlatList } = navigationState.routes[index].routes[0].params;
+                  // scrollToTopFlatList();
                 }
               } else {
                 jumpToIndex(index);

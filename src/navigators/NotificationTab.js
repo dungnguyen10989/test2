@@ -1,13 +1,22 @@
 import { StackNavigator } from 'react-navigation';
-
-import Chat from '../components/screens/authorized/chat/Chat';
+import $ListNotification from '../components/common/containers/listNotification/indexListNotification';
+import FilterTeam from './FilterTeam';
+import TeamInformation from './TeamInformation';
+import $DetailOfUser from '../components/common/containers/detailOfUser/indexDetailOfUser';
+import TrainingInformation from './TrainingInformation';
+import $DetailOfFeed from '../components/common/containers/detailOfFeed/DetailOfFeed';
 
 const routeConfig = {
-  Chat: { screen: Chat },
+  ListNotification: { screen: $ListNotification },
+  FilterTeam: { screen: FilterTeam, navigationOptions: { } },
+  TeamInformation: { screen: TeamInformation },
+  DetailOfUser: { screen: $DetailOfUser },
+  TrainingInformation: { screen: TrainingInformation },
+  DetailOfFeed: { screen: $DetailOfFeed }
 };
 
 const navConfig = {
-  initialRouteName: 'Chat',
+  initialRouteName: 'ListNotification',
 };
 
 const NotificationTab = StackNavigator(routeConfig, navConfig);

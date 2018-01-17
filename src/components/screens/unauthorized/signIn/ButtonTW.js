@@ -52,7 +52,7 @@ class TwitterButton extends Component {
   render() {
     const { isLoggedIn } = this.state;
     return (
-      <View style={{ flex: 1 }}>
+      <View >
         {isLoggedIn ? 
           <TouchableOpacity onPress={this.handleLogout}>
             <Text>Log out</Text>

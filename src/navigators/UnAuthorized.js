@@ -9,7 +9,7 @@ const routeConfig = {
 };
 
 const navConfig = {
-  initialRouteName: 'UnAuthForm',
+  initialRouteName: 'Introduce',
   navigationOptions: {
     header: null,
   },

@@ -2,14 +2,14 @@ import { TabNavigator } from 'react-navigation';
 import EventTab from './EventTab';
 import FeedTab from './FeedTab';
 import TeamTab from './TeamTab';
-import MapTab from '../components/screens/authorized/tabs/mapTab/MapTab';
+import $MarkerMap from '../components/common/containers/markerMap/indexMarkerMap';
 import NotificationTab from './NotificationTab';
 import Tabbar from './bars';
 
 const routeConfig = {
   FeedTab: { screen: FeedTab },
   EventTab: { screen: EventTab },
-  MapTab: { screen: MapTab },
+  MapTab: { screen: $MarkerMap },
   TeamTab: { screen: TeamTab },
   NotificationTab: { screen: NotificationTab },
 };

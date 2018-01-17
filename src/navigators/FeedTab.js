@@ -8,7 +8,7 @@ import $DetailOfFeed from '../components/common/containers/detailOfFeed/DetailOf
 import $Payment from '../components/common/containers/payment';
 
 const routeConfig = {
-  ListFeed: { screen: $ListFeed, navigationOptions: { header: null } },
+  ListFeed: { screen: $ListFeed, navigationOptions: { } },
   EventInformation: { screen: EventInformation },
   TrainingInfomation: { screen: TrainingInformation },
   TeamInformation: { screen: TeamInformation },

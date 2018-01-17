@@ -4,7 +4,7 @@ import { TabNavigator } from 'react-navigation';
 
 import $DetailOfEvent from '../components/common/containers/detailOfEvent/indexDetailOfEvent';
 import $MembersOfEvent from '../components/common/containers/membersOfEvent/indexMembersOfEvent';
-import $MarkerMap from '../components/common/containers/markerMap';
+import $MarkerMap from '../components/common/containers/markerMap/indexMarkerMap';
 
 const EventInformation = (props) => {
   const { id, type } = props.navigation.state.params;

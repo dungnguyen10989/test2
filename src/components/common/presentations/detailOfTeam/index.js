@@ -10,7 +10,6 @@ const navigate = routeName => NavigationActions.navigate({ routeName });
 
 class DetailOfTeam extends React.Component {
   render() {
-    console.log(this.props);
     const { team, strings } = this.props;
     const _cover = team ? { uri: team.photo_cover } : null;
     const _avatar = team ? { uri: team.photo } : noteam;

@@ -6,7 +6,7 @@ import TrainingInformation from './TrainingInformation';
 import $DetailOfFeed from '../components/common/containers/detailOfFeed/DetailOfFeed';
 
 const routeConfig = {
-  FilterTeam: { screen: FilterTeam, navigationOptions: { header: null } },
+  FilterTeam: { screen: FilterTeam, navigationOptions: { } },
   TeamInformation: { screen: TeamInformation },
   DetailOfUser: { screen: $DetailOfUser },
   TrainingInformation: { screen: TrainingInformation },

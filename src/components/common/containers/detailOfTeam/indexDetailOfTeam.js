@@ -1,100 +1,77 @@
 import React from 'react';
-import { View, FlatList, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
+import { View, FlatList, Text, ActivityIndicator, ScrollView } from 'react-native';
 import { compose, lifecycle, withState } from 'recompose';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import FeedItem from '../../presentations/feedItem';
 import DetailOfTeam from '../../presentations/detailOfTeam';
+import { LIMIT_RESULT_SERVICE } from '../../../../utils';
 
 import {
   getDetailOfTeamAction,
   getFeedsOfTeamAction,
-  refreshFeedsOfTeamAction,
   isFetchingDetailOfTeamSelector,
   isFetchingFeedsOfTeamSelector,
-  isRefreshingFeedsOfTeamSelector,
   detailOfTeamSelector,
   feedsOfTeamSelector
 } from './stateDetailOfTeam';
 
 const $DetailOfTeam = (props) => {
   const {
-    getFeedsOfTeamAction,
     detailOfTeam,
     feedsOfTeam,
     page,
     isFetchingFeedsOfTeam,
     isFetchingDetailOfTeam,
-    isRefreshingFeedsOfTeam,
-    strings
+    strings,
+    dispatch
   } = props;
   const { id, type } = props.screenProps;
 
   const handleOnEndReached =
-  () => {
-    if (!isRefreshingFeedsOfTeam && !isFetchingFeedsOfTeam && !this.onEndReachedCalledDuringMomentum) {
-      this.onEndReachedCalledDuringMomentum = true;
-      getFeedsOfTeamAction(id, page);
-    }
-  };
-  
+    () => {
+      if (!isFetchingFeedsOfTeam && !this.onEndReachedCalledDuringMomentum) {
+        this.onEndReachedCalledDuringMomentum = true;
+        dispatch(getFeedsOfTeamAction(id, page));
+      }
+    };
+
   return (
-    <View style={{ flex: 1 }}>
-      {
-        detailOfTeam[id] && !isFetchingDetailOfTeam && 
-        <TouchableOpacity 
-          activeOpacity={0.8} 
-          style={{ 
-          backgroundColor: 'orange',
-          padding: 20,
-          borderRadius: 5,
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'absolute',
-          bottom: 20,
-          right: 20,
-          zIndex: 10000
-        }}
-        >
-          <Text style={{ fontSize: 22, color: '#333' }}>{strings.joinRequest}</Text>
-        </TouchableOpacity>
-      }
-      <FlatList
-        style={{ flex: 1 }}
-        data={isRefreshingFeedsOfTeam ? [] : feedsOfTeam[id]}
-        renderItem={({ item }) => <FeedItem feed={item} />}
-        ListHeaderComponent={() => (<DetailOfTeam 
-          team={isFetchingDetailOfTeam ? null : detailOfTeam[id]}
+    <ScrollView style={{ flex: 1 }}>
+      <View style={{ display: !isFetchingDetailOfTeam ? 'flex' : 'none' }}>
+        <DetailOfTeam
+          team={detailOfTeam[id]}
           navigation={props.navigation}
-        />)}
-        ListFooterComponent={() => {
-          if(type === 2) {
-            return(
-              <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                <Icon name="ios-lock" color="#f1c40f" size={40} style={{ marginTop: 40 }} />
-                <Text style={{ marginBottom: 40 }}>{`${strings.privateTeam}`}</Text>
-              </View>
-            );
-          }
-          return null;
-        }}
-        keyExtractor={(item, index) => index}
-        onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
-        onEndReachedThreshold={0}
-        ItemSeparatorComponent={() => <View style={{ height: 0, marginVertical: 5 }} />}
-        onEndReached={() => handleOnEndReached()}
-      />
-      {
-        isFetchingFeedsOfTeam && 
-        <ActivityIndicator 
-          animating 
-          style={{ 
-            position: 'absolute', left: '50%', top: '50%', right: '50%', zIndex: 10001
-          }}  
         />
-      }
-    </View>
+        <FlatList
+          style={{ flex: 1 }}
+          data={feedsOfTeam[id] && feedsOfTeam[id].slice(0, page * LIMIT_RESULT_SERVICE)}
+          renderItem={({ item }) => <FeedItem feed={item} />}
+          keyExtractor={(item) => item.id}
+          onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
+          onEndReachedThreshold={0}
+          ItemSeparatorComponent={() => <View style={{ height: 0, marginVertical: 5 }} />}
+          onEndReached={() => handleOnEndReached()}
+        />
+        {
+          type === 2 && 
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <Icon name="ios-lock" color="#f1c40f" size={40} style={{ marginTop: 40 }} />
+            <Text style={{ marginBottom: 40 }}>{`${strings.privateTeam}`}</Text>
+          </View>
+        }
+        {
+          isFetchingFeedsOfTeam &&
+          <ActivityIndicator
+            animating
+            style={{
+              position: 'absolute', left: '50%', top: '50%', right: '50%', zIndex: 10001
+            }}
+          />
+        }
+      </View>
+    </ScrollView>
   );
 };
 
@@ -105,26 +82,21 @@ const HOCDetailOfTeam = compose(
       feedsOfTeam: feedsOfTeamSelector(state),
       isFetchingFeedsOfTeam: isFetchingFeedsOfTeamSelector(state),
       isFetchingDetailOfTeam: isFetchingDetailOfTeamSelector(state),
-      isRefreshingFeedsOfTeam: isRefreshingFeedsOfTeamSelector(state),
       strings: state.strings
     }),
-    {
-      getDetailOfTeamAction,
-      getFeedsOfTeamAction,
-      refreshFeedsOfTeamAction
-    }
+    dispatch => ({ dispatch })
   ),
   withState('page', 'setPage', 1),
   lifecycle({
     componentDidMount() {
       const { id, type } = this.props.screenProps;
       const {
-        getDetailOfTeamAction, getFeedsOfTeamAction, page
+        dispatch, page
       } = this.props;
       if (type !== 2) {
-        getFeedsOfTeamAction(id, page);
+        dispatch(getFeedsOfTeamAction(id, page));
       }
-      getDetailOfTeamAction(id);
+      dispatch(getDetailOfTeamAction(id));
     },
     componentWillReceiveProps(nextProps) {
       const { id } = this.props.screenProps;
@@ -132,7 +104,7 @@ const HOCDetailOfTeam = compose(
       const nextFeedsOfTeam = nextProps.feedsOfTeam;
 
       if (JSON.stringify(nextFeedsOfTeam[id]) !== JSON.stringify(feedsOfTeam[id])) {
-        const page = Math.round(nextFeedsOfTeam.length / 12) + 1;
+        const page = Math.round(nextFeedsOfTeam.length / LIMIT_RESULT_SERVICE) + 1;
         setPage(page);
       }
     }

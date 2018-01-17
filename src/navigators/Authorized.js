@@ -12,9 +12,6 @@ const routeConfig = {
 
 const navConfig = {
   initialRouteName: 'Tabs',
-  navigationOptions: {
-    header: null,
-  },
 };
 
 export default Authorized = DrawerNavigator(routeConfig, navConfig);

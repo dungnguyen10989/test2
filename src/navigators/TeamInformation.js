@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import $DetailOfTeam from '../components/common/containers/detailOfTeam/indexDetailOfTeam';
 import $TrainingsOfTeam from '../components/common/containers/trainingsOfTeam/indexTrainingOfTeam';
 import $MembersOfTeam from '../components/common/containers/membersOfTeam/indexMembersOfTeam';
-import $MarkerMap from '../components/common/containers/markerMap';
+import $MarkerMap from '../components/common/containers/markerMap/indexMarkerMap';
 import HeaderLeft from './headerLeft';
 
 const TeamInformation = (props) => {
@@ -42,10 +42,10 @@ const HOCTeamInformation = compose(
   )
 )(TeamInformation);
 
-HOCTeamInformation.navigationOptions = props => ({
-  title: 'Team',
-  headerLeft: <HeaderLeft onPress={() => props.navigation.goBack()} />,
-  headerBackTitle: ''
-});
+// HOCTeamInformation.navigationOptions = props => ({
+//   title: 'Team',
+//   headerLeft: <HeaderLeft onPress={() => props.navigation.goBack()} />,
+//   headerBackTitle: ''
+// });
 
 export default HOCTeamInformation;

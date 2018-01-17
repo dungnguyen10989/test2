@@ -85,7 +85,6 @@ const HOCIntroduce = compose(
   ),
   lifecycle({
     componentDidMount() {
-      AsyncStorage.removeItem('token');
       this.props.dispatch(getDisciplineAction());
       this.props.dispatch(getLevelAction());
       AsyncStorage.getItem('token').then(response => {
